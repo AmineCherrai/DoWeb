@@ -1,0 +1,59 @@
+############################################
+## Disable Indexing
+
+   Options -Indexes
+
+############################################
+## default index file
+
+    DirectoryIndex index.php
+
+<IfModule mod_php5.c>
+############################################
+## adjust memory limit
+
+#    php_value memory_limit 64M
+    php_value memory_limit 256M
+    php_value max_execution_time 18000
+
+############################################
+## disable magic quotes for php request vars
+
+    php_flag magic_quotes_gpc off
+    
+###########################################
+# turn off compatibility with PHP4 when dealing with objects
+
+    php_flag zend.ze1_compatibility_mode Off
+
+</IfModule>
+
+<IfModule mod_rewrite.c>
+
+Options +FollowSymLinks
+RewriteEngine on
+
+############################################
+## TRACE and TRACK HTTP methods disabled to prevent XSS attacks
+
+    RewriteCond %{REQUEST_METHOD} ^TRAC[EK]
+    RewriteRule .* - [L,R=405]
+
+############################################
+## never rewrite for existing files, directories and links
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-l
+    
+############################################
+## rewrite everything else to index.php
+
+    RewriteRule ^(.*)$ index.php?url=$1 [L]
+    
+############################################
+## By default allow all access
+
+    Order allow,deny
+    Allow from all
+</IfModule>
